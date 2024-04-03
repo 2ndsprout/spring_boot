@@ -44,7 +44,9 @@ public class ArticleController {
     }
     @GetMapping("/update/{articleId}")
     public String updateForm (@PathVariable("articleId") int articleId, Model model) {
-        Optional<Article> article = articleSQLRepository.findById(articleId);
+        Optional<Article> optionalArticle = articleSQLRepository.findById(articleId);
+
+        Article article = optionalArticle.orElseThrow(() -> new RuntimeException("게시물을 찾을 수 없습니다."));
 
         model.addAttribute("article",article);
         return "update";
@@ -54,15 +56,17 @@ public class ArticleController {
                           @RequestParam("title") String title,
                           @RequestParam("body") String body) {
 
-        Optional<Article> article = articleSQLRepository.findById(articleId);
+        Optional<Article> optionalArticle = articleSQLRepository.findById(articleId);
 
-        if (article.isEmpty()) {
-            throw new RuntimeException("게시물을 찾을 수 없습니다.");
-        }
-        Article updatedArticle = article.get();
-        updatedArticle.setTitle(title);
-        updatedArticle.setBody(body);
-        articleSQLRepository.save(updatedArticle);
+        Article article = optionalArticle.orElseThrow(() -> new RuntimeException("게시물을 찾을 수 없습니다."));
+
+        // Article 객체의 속성 변경
+        article.setTitle(title);
+        article.setBody(body);
+
+        // 변경된 Article 객체 저장
+        articleSQLRepository.save(article);
+
 
         return "redirect:/detail/%d".formatted(articleId);
     }
