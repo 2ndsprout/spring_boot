@@ -8,9 +8,13 @@
 <h1>게시물 목록</h1>
 <ul>
     <li th:each="article : ${articleList}">
-        <a th:href="@{|/detail?articleId=${article.id}|}" th:text="${article.title}"></a>
+        <a th:href="@{|/detail/${article.id}|}" th:text="${article.title}"></a>
     </li>
 </ul>
-<a href="/addForm">게시물등록</a>
+<a href="/add">게시물 등록</a>
+<form action="/search">
+    <input type="text" name="keyword">
+    <input type="submit" value="검색">
+</form>
 </body>
 </html>

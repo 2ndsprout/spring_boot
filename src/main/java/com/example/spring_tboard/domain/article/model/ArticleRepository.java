@@ -3,7 +3,7 @@ package com.example.spring_tboard.domain.article.model;
 import com.example.spring_tboard.domain.article.base.CommonUtil;
 
 import java.util.ArrayList;
-public class ArticleRepository {
+public class ArticleRepository implements Repository {
 
     CommonUtil commonUtil = new CommonUtil();
     ArrayList<Article> articleList = new ArrayList<>();
@@ -13,10 +13,9 @@ public class ArticleRepository {
     }
 
     public void makeTest () {
-        Article a1 = new Article(1,"안녕하세요 자바 하는중입니다.", "냉무", 0, commonUtil.getCurrentDateTime());
-        Article a2 = new Article(2,"자바 어떻게 해야되나요", "냉무", 0, commonUtil.getCurrentDateTime());
-        Article a3 = new Article(3,"정처기 따야되나요?", "냉무", 0, commonUtil.getCurrentDateTime());
-
+        Article a1 = new Article(1, "안녕하세요 반갑습니다. 자바 공부중이에요.", "냉무", 0, commonUtil.getCurrentDateTime());
+        Article a2 = new Article(2, "자바 질문좀 할게요~", "냉무", 0, commonUtil.getCurrentDateTime());
+        Article a3 = new Article(3, "정처기 따야되나요?", "냉무", 0, commonUtil.getCurrentDateTime());
         articleList.add(a1);
         articleList.add(a2);
         articleList.add(a3);

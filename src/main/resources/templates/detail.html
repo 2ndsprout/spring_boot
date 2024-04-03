@@ -5,15 +5,15 @@
     <title>상세보기</title>
 </head>
 <body>
-    <h1>상세보기</h1>
-    <div>
-        <div th:text="${article.id}"></div>
-        <div th:text="${article.title}"></div>
-        <div th:text="${article.body}"></div>
-        <div th:text="${article.hit}"></div>
-        <div th:text="${article.regDate}"></div>
-    </div>
-    <a th:href="@{|/delete?articleId=${article.id}|}">삭제</a>
-    <a th:href="@{|/update?articleId=${article.id}|}">수정</a>
+<h1>상세보기</h1>
+<div>
+    <div th:text="${article.id}"></div>
+    <div th:text="${article.title}"></div>
+    <div th:text="${article.body}"></div>
+    <div th:text="${article.hit}"></div>
+    <div th:text="${article.regDate}"></div>
+</div>
+<a th:href="@{|/update/${article.id}}">게시물 수정</a>
+<a th:href="@{|/delete/${article.id}}">게시물 삭제</a>
 </body>
 </html>
