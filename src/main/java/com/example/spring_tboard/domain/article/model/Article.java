@@ -1,9 +1,6 @@
 package com.example.spring_tboard.domain.article.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,9 +15,17 @@ public class Article {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @Column(length = 200)
     private String title;
+
+    @Column(columnDefinition = "TEXT")
     private String body;
+
+    @Column(columnDefinition = "int")
     private int hit;
+
+    @Column(columnDefinition = "DATETIME")
     private String regDate;
 
     public void increaseHit () {

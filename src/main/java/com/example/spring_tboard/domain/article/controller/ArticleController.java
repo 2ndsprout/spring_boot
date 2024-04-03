@@ -46,7 +46,7 @@ public class ArticleController {
     public String updateForm (@PathVariable("articleId") int articleId, Model model) {
         Optional<Article> optionalArticle = articleSQLRepository.findById(articleId);
 
-        Article article = optionalArticle.orElseThrow(() -> new RuntimeException("게시물을 찾을 수 없습니다."));
+        Article article = optionalArticle.get();
 
         model.addAttribute("article",article);
         return "update";
@@ -58,7 +58,7 @@ public class ArticleController {
 
         Optional<Article> optionalArticle = articleSQLRepository.findById(articleId);
 
-        Article article = optionalArticle.orElseThrow(() -> new RuntimeException("게시물을 찾을 수 없습니다."));
+        Article article = optionalArticle.get();
 
         // Article 객체의 속성 변경
         article.setTitle(title);
