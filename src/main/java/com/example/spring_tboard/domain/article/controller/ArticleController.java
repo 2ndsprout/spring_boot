@@ -1,18 +1,23 @@
 package com.example.spring_tboard.domain.article.controller;
 
+import com.example.spring_tboard.domain.article.base.CommonUtil;
 import com.example.spring_tboard.domain.article.model.Article;
-import com.example.spring_tboard.domain.article.model.ArticleRepository;
-import com.example.spring_tboard.domain.article.model.Repository;
+import com.example.spring_tboard.domain.article.model.ArticleSQLRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class ArticleController {
 
-    Repository articleRepository = new ArticleRepository();
+    //Repository articleRepository = new ArticleRepository();
+    @Autowired
+    ArticleSQLRepository articleSQLRepository;
+    CommonUtil commonUtil = new CommonUtil();
 
     @GetMapping("/add")
     public String addForm () {
@@ -21,24 +26,26 @@ public class ArticleController {
     @PostMapping("/add")
     public String add (@RequestParam("title") String title,
                        @RequestParam("body") String body) {
-        articleRepository.saveArticle(title, body);
+        Article article = new Article();
+        article.setTitle(title);
+        article.setBody(body);
+        article.setHit(0);
+        article.setRegDate(commonUtil.getCurrentDateTime());
+        articleSQLRepository.save(article);
 
         return "redirect:/list";
     }
     @RequestMapping("/list")
     public String list (Model model) {
-        ArrayList<Article> articleList =articleRepository.findAll();
+        List<Article> articleList = articleSQLRepository.findAll();
         model.addAttribute("articleList", articleList);
 
         return "list";
     }
     @GetMapping("/update/{articleId}")
     public String updateForm (@PathVariable("articleId") int articleId, Model model) {
-        Article article = articleRepository.findArticleById(articleId);
+        Optional<Article> article = articleSQLRepository.findById(articleId);
 
-        if (article==null) {
-            throw new RuntimeException("게시물을 찾을 수 없습니다.");
-        }
         model.addAttribute("article",article);
         return "update";
     }
@@ -47,45 +54,45 @@ public class ArticleController {
                           @RequestParam("title") String title,
                           @RequestParam("body") String body) {
 
-        Article article = articleRepository.findArticleById(articleId);
+        Optional<Article> article = articleSQLRepository.findById(articleId);
 
-        if (article==null) {
+        if (article.isEmpty()) {
             throw new RuntimeException("게시물을 찾을 수 없습니다.");
         }
-        articleRepository.updateArticle(article, title, body);
+        Article updatedArticle = article.get();
+        updatedArticle.setTitle(title);
+        updatedArticle.setBody(body);
+        articleSQLRepository.save(updatedArticle);
 
         return "redirect:/detail/%d".formatted(articleId);
     }
     @RequestMapping("/delete/{articleId}")
     public String delete (@PathVariable("articleId") int articleId) {
 
-        Article article = articleRepository.findArticleById(articleId);
-
-        if (article==null) {
-            throw new RuntimeException("게시물을 찾을 수 없습니다.");
-        }
-        articleRepository.deleteArticle(article);
+        articleSQLRepository.deleteById(articleId);
 
         return "redirect:/list";
 
     }
     @RequestMapping("/detail/{articleId}")
     public String detail (@PathVariable("articleId") int articleId, Model model) {
-        Article article = articleRepository.findArticleById(articleId);
+        Optional<Article> optionalArticle = articleSQLRepository.findById(articleId);
 
+        if (optionalArticle.isEmpty()) {
+            throw new RuntimeException("게시물을 찾을 수 없습니다.");
+        }
+
+        Article article = optionalArticle.get();
         article.increaseHit();
-        model.addAttribute("article",article);
+        articleSQLRepository.save(article);
 
+        model.addAttribute("article", article);
         return "detail";
 
     }
     @RequestMapping("/search")
     public String search (@RequestParam(value = "keyword", defaultValue = "") String keyword, Model model) {
-        ArrayList<Article> searchedList = articleRepository.findArticleByKeyword(keyword);
-
-        if (searchedList==null) {
-            throw new RuntimeException("키워드를 찾지 못했습니다");
-        }
+        List<Article> searchedList = articleSQLRepository.findByTitleContaining(keyword);
 
         model.addAttribute("articleList", searchedList);
         return "list";
